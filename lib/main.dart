@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(),
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(),
+        '/': (context) => HomePage(titre: title_app,),
       },
     );
   }
