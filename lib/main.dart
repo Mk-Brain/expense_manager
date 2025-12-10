@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timegest/widgets/formwidget.dart';
 import '../screens/home_page.dart';
 void main() {
   runApp(const MyApp());
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp( 
       debugShowCheckedModeBanner: false,
       title: title_app,
       theme: ThemeData(
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(),
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(titre: title_app,),
+        '/': (context) =>  HomePage(titre: title_app,),//formAddExpense()
       },
     );
   }

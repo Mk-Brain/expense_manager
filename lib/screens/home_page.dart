@@ -1,5 +1,7 @@
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:timegest/widgets/formwidget.dart';
 
 class HomePage extends StatefulWidget {
   final String titre;
@@ -12,24 +14,30 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool _currentselected = false;
   late final _tabController;
+  late final AnimationController _animationController;
+
+
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
+    _animationController = AnimationController(vsync: this, duration:const Duration(milliseconds: 800));
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return DefaultTabController(
       initialIndex: 1,
-      length: 2,
+      length: 3,
 
       child: Scaffold(
         appBar: AppBar(
@@ -47,10 +55,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             indicatorColor: Colors.white,
             dividerColor: Colors.transparent,
             labelColor: Colors.white,
-            labelStyle: TextStyle(fontSize: 24),
+            labelStyle: TextStyle(fontSize: 20),
             tabs: [
               Tab(text: "Category"),
               Tab(text: "Tag"),
+              Tab(text: "Statistiques"),
             ],
           ),
         ),
@@ -59,11 +68,27 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           children: [
             SafeArea(child: Center(child: Text("data1"))),
             SafeArea(child: Center(child: Text("data2"))),
+            SafeArea(child: Center(child: Text("data3"))),
           ],
         ),
         floatingActionButton: FloatingActionButton(
           foregroundColor: Theme.of(context).primaryColor,
-          onPressed: () {},
+          onPressed: () {
+            showModalBottomSheet(
+              transitionAnimationController: _animationController,
+              isScrollControlled: true,
+              constraints: BoxConstraints.tight(
+                Size(
+                  MediaQuery.of(context).size.width,
+                  MediaQuery.of(context).size.height,
+                ),
+              ),
+              context: context,
+              builder: (BuildContext context) {
+                return formAddExpense();
+              },
+            );
+          },
           child: Icon(Icons.add),
         ),
         drawer: Drawer(
