@@ -1,6 +1,8 @@
 //import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:timegest/screens/categorymanagmentscreen.dart';
+import 'package:timegest/screens/tagmanagmentscreen.dart';
 import 'package:timegest/widgets/formwidget.dart';
 
 class HomePage extends StatefulWidget {
@@ -123,6 +125,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   setState(() {
                     _currentselected = !_currentselected;
                   });
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Categorymanagmentscreen()));
                 },
               ),
               ListTile(
@@ -136,6 +139,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   setState(() {
                     _currentselected = !_currentselected;
                   });
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Tagmanagmentscreen()));
                 },
               ),
             ],
