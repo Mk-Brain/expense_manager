@@ -5,8 +5,8 @@ class Expense {
   final String titre;
   final num montant;
   final DateTime date;
-  final int category_id;
-  final int tag_id;
+  final String cat;
+  final String tag;
   final String motif;
 
   Expense({
@@ -14,8 +14,8 @@ class Expense {
     required this.titre,
     required this.montant,
     required this.date,
-    required this.category_id,
-    required this.tag_id,
+    required this.cat,
+    required this.tag,
     required this.motif,
   });
   factory Expense.fromJSon(Map<String, dynamic> objetjson) {
@@ -24,8 +24,8 @@ class Expense {
       titre: objetjson['titre'],
       montant: objetjson['montant'],
       date: DateTime.parse(objetjson['date']),
-      category_id: objetjson['category_id'],
-      tag_id: objetjson['tag_id'],
+      cat: objetjson['cat'],
+      tag: objetjson['tag'],
       motif: objetjson['motif'],
     );
   }
@@ -36,8 +36,8 @@ class Expense {
       'titre': titre,
       'montant': montant,
       'date': date,
-      'categorie': category_id,
-      'tag_ig' : tag_id,
+      'cat': cat,
+      'tag' : tag,
       'motif' : motif
     };
   }

@@ -1,6 +1,6 @@
-//import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+import 'package:timegest/models/expenses.dart';
+import 'package:timegest/screens/category_screen.dart';
 import 'package:timegest/screens/categorymanagmentscreen.dart';
 import 'package:timegest/screens/tagmanagmentscreen.dart';
 import 'package:timegest/widgets/formwidget.dart';
@@ -14,17 +14,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  //controlle de l'etat de selection du item de la tabBar
   bool _currentselected = false;
   late final _tabController;
+  //controller de l'animation d'affichage de la bottom sheet
   late final AnimationController _animationController;
-
 
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _animationController = AnimationController(vsync: this, duration:const Duration(milliseconds: 800));
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
   }
 
   @override
@@ -36,7 +40,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
       initialIndex: 1,
       length: 3,
@@ -68,7 +71,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         body: TabBarView(
           controller: _tabController,
           children: [
-            SafeArea(child: Center(child: Text("data1"))),
+            CategoryScreen(),
+            //affichage de la liste par tag
             SafeArea(child: Center(child: Text("data2"))),
             SafeArea(child: Center(child: Text("data3"))),
           ],
@@ -76,6 +80,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         floatingActionButton: FloatingActionButton(
           foregroundColor: Theme.of(context).primaryColor,
           onPressed: () {
+            //affichage de la bottom sheet
             showModalBottomSheet(
               transitionAnimationController: _animationController,
               isScrollControlled: true,
@@ -93,11 +98,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           },
           child: Icon(Icons.add),
         ),
+        //construction du drower
         drawer: Drawer(
           backgroundColor: Colors.deepPurple,
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
+              //en-tête du drower
               Container(
                 color: Colors.white,
                 margin: EdgeInsets.all(0),
@@ -113,6 +120,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+              //corps du drower
               Divider(height: 1, thickness: 1),
               ListTile(
                 leading: Icon(Icons.category, color: Colors.white),
@@ -125,7 +133,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   setState(() {
                     _currentselected = !_currentselected;
                   });
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Categorymanagmentscreen()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Categorymanagmentscreen(),
+                    ),
+                  );
                 },
               ),
               ListTile(
@@ -139,7 +152,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   setState(() {
                     _currentselected = !_currentselected;
                   });
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Tagmanagmentscreen()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Tagmanagmentscreen(),
+                    ),
+                  );
                 },
               ),
             ],

@@ -1,12 +1,12 @@
-class Category{
+class CategoryExpense{
   int id;
   String name;
 
 
-  Category({required this.id,required this.name});
+  CategoryExpense({required this.id,required this.name});
 
-    factory Category.fromJson(Map<String, dynamic>objetjson){
-    return Category(
+    factory CategoryExpense.fromJson(Map<String, dynamic>objetjson){
+    return CategoryExpense(
         id: objetjson['id'],
         name: objetjson['name'],
 
