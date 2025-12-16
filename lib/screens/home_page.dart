@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:timegest/models/expenses.dart';
-import 'package:timegest/screens/category_screen.dart';
+import 'package:timegest/screens/displaybycategoty.dart';
 import 'package:timegest/screens/categorymanagmentscreen.dart';
+import 'package:timegest/screens/displaybytag.dart';
 import 'package:timegest/screens/tagmanagmentscreen.dart';
 import 'package:timegest/widgets/formwidget.dart';
 
@@ -43,7 +43,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return DefaultTabController(
       initialIndex: 1,
       length: 3,
-
       child: Scaffold(
         appBar: AppBar(
           elevation: 16,
@@ -71,9 +70,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         body: TabBarView(
           controller: _tabController,
           children: [
+            //affichage de la liste par category
             CategoryScreen(),
             //affichage de la liste par tag
-            SafeArea(child: Center(child: Text("data2"))),
+            Displaybytag(),
             SafeArea(child: Center(child: Text("data3"))),
           ],
         ),

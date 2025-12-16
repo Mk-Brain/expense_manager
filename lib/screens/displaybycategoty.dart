@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:timegest/data_base/expensiveprovider.dart';
 import 'package:timegest/models/expenses.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -11,20 +13,55 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
 
   //listes de dépense
-  late List<Expense> myExpenses;
+  List<Expense> myExpenses = [];
+  //dictionnaire de dépenses regoupées en catégory
+  Map<String, List<Expense>> categoryExp = {};
 
-  //listes de dépenses regoupées en catégory
-  late Map<String, List<Expense>> categoryExp;
+  ExpenseProvider ep = ExpenseProvider();
+
+  Future<void> opendb() async{
+    Database db = await ep.openDataBase() ;
+  }
+
+  Future<void> loaddata() async{
+    final data = await ep.extract_expense();
+    if(mounted) {
+      setState(() {
+      myExpenses = data;
+    });
+    }
+  }
+
+  Future<void> deletedata(int id) async{
+    ep.delete_expense(id);
+    setState(() {
+      myExpenses.removeWhere((item)=>item.id == id);
+    });
+  }
+
+  Future<void> adddata(Expense e) async{
+    ep.insert_expense(e);
+    loaddata();
+  }
+
+
+  @override
+  void initState(){
+    super.initState();
+    opendb();
+  }
+
+
 
   void regroupement(
       Map<String, List<Expense>> categoryExp,
       List<Expense> myExpenses,
       ) {
     for (var action in myExpenses) {
-      if (!categoryExp.keys.contains(action.cat)) {
-        categoryExp.putIfAbsent(action.cat, () => [action]);
+      if (!categoryExp.keys.contains(action.category)) {
+        categoryExp.putIfAbsent(action.category, () => [action]);
       } else {
-        categoryExp[action.cat]!.add(action);
+        categoryExp[action.category]!.add(action);
       }
     }
   }
@@ -40,8 +77,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
             child: ListBody(
               children: <Widget>[
                 Text("Montant :${obj.montant.toString()}"),
-                Text("Réalisée le : ${obj.date.toString()}"),
-                Text("Category : ${obj.cat}"),
+                Text("Réalisée le : ${obj.date}"),
+                Text("Category : ${obj.category}"),
                 Text("Tag : ${obj.tag}"),
                 Text("Motif : ${obj.motif}"),
               ],
@@ -63,101 +100,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    myExpenses = [
-      Expense(
-        id: 1,
-        titre: "titre1",
-        montant: 125,
-        date: DateTime(0),
-        cat: "cat1",
-        tag: "tag1",
-        motif: "motif1",
-      ),
-      Expense(
-        id: 2,
-        titre: "titre2",
-        montant: 126,
-        date: DateTime(0),
-        cat: "cat2",
-        tag: "tag2",
-        motif: "motif2",
-      ),
-      Expense(
-        id: 3,
-        titre: "titre3",
-        montant: 125,
-        date: DateTime(0),
-        cat: "cat1",
-        tag: "tag1",
-        motif: "motif4",
-      ),
-      Expense(
-        id: 4,
-        titre: "titre4",
-        montant: 126,
-        date: DateTime(0),
-        cat: "cat2",
-        tag: "tag3",
-        motif: "motif3",
-      ),
-      Expense(
-        id: 5,
-        titre: "titre5",
-        montant: 125,
-        date: DateTime(0),
-        cat: "cat1",
-        tag: "tag1",
-        motif: "motif5",
-      ),
-      Expense(
-        id: 6,
-        titre: "titre6",
-        montant: 126,
-        date: DateTime(0),
-        cat: "cat5",
-        tag: "tag3",
-        motif: "motif3",
-      ),
-      Expense(
-        id: 3,
-        titre: "titre3",
-        montant: 125,
-        date: DateTime(0),
-        cat: "cat1",
-        tag: "tag1",
-        motif: "motif4",
-      ),
-      Expense(
-        id: 4,
-        titre: "titre4",
-        montant: 126,
-        date: DateTime(0),
-        cat: "cat2",
-        tag: "tag3",
-        motif: "motif3",
-      ),
-      Expense(
-        id: 5,
-        titre: "titre5",
-        montant: 125,
-        date: DateTime(0),
-        cat: "cat1",
-        tag: "tag1",
-        motif: "motif5",
-      ),
-      Expense(
-        id: 6,
-        titre: "titre6",
-        montant: 126,
-        date: DateTime(0),
-        cat: "cat5",
-        tag: "tag3",
-        motif: "motif3",
-      ),
-    ];
+    loaddata();
     categoryExp = {};
-
     regroupement(categoryExp, myExpenses);
+
     return ListView.builder(
       itemCount: categoryExp.length,
       itemBuilder: (context, index) {
@@ -193,7 +139,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     trailing: IconButton(
                       icon: Icon(Icons.delete),
                       color: Colors.deepPurple,
-                      onPressed: () {},
+                      onPressed: () {
+                        deletedata(toElement.id);
+                      },
                     ),
                     subtitle: Text(toElement.date.toString(), style: TextStyle(fontStyle: FontStyle.italic),),
                     //titleTextStyle: TextStyle(fontSize: 14),

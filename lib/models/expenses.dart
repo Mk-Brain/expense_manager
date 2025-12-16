@@ -4,8 +4,8 @@ class Expense {
   final int id;
   final String titre;
   final num montant;
-  final DateTime date;
-  final String cat;
+  final String date;
+  final String category;
   final String tag;
   final String motif;
 
@@ -14,7 +14,7 @@ class Expense {
     required this.titre,
     required this.montant,
     required this.date,
-    required this.cat,
+    required this.category,
     required this.tag,
     required this.motif,
   });
@@ -23,20 +23,19 @@ class Expense {
       id: objetjson['id'],
       titre: objetjson['titre'],
       montant: objetjson['montant'],
-      date: DateTime.parse(objetjson['date']),
-      cat: objetjson['cat'],
+      date: objetjson['date'],
+      category: objetjson['category'],
       tag: objetjson['tag'],
       motif: objetjson['motif'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
+    return { /*'id': id,*/
       'titre': titre,
       'montant': montant,
       'date': date,
-      'cat': cat,
+      'category': category,
       'tag' : tag,
       'motif' : motif
     };
