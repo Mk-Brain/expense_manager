@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:timegest/data_base/expensiveprovider.dart';
 import 'package:timegest/models/expenses.dart';
@@ -17,39 +18,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
   //dictionnaire de dépenses regoupées en catégory
   Map<String, List<Expense>> categoryExp = {};
 
-  ExpenseProvider ep = ExpenseProvider();
-
-  Future<void> opendb() async{
-    Database db = await ep.openDataBase() ;
-  }
-
   Future<void> loaddata() async{
-    final data = await ep.extract_expense();
+    final data = await context.watch<ExpenseProvider>().extract_expense();
     if(mounted) {
-      setState(() {
-      myExpenses = data;
-    });
+     setState(() {
+       myExpenses = data;
+     });
     }
   }
 
-  Future<void> deletedata(int id) async{
-    ep.delete_expense(id);
-    setState(() {
-      myExpenses.removeWhere((item)=>item.id == id);
-    });
-  }
-
-  Future<void> adddata(Expense e) async{
-    ep.insert_expense(e);
-    loaddata();
-  }
-
-
-  @override
-  void initState(){
-    super.initState();
-    opendb();
-  }
 
 
 
@@ -140,7 +117,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       icon: Icon(Icons.delete),
                       color: Colors.deepPurple,
                       onPressed: () {
-                        deletedata(toElement.id);
+                        context.read<ExpenseProvider>().delete_expense(toElement.id);
                       },
                     ),
                     subtitle: Text(toElement.date.toString(), style: TextStyle(fontStyle: FontStyle.italic),),

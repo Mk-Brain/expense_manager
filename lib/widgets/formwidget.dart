@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:timegest/data_base/categoryprovider.dart';
 import 'package:timegest/data_base/expensiveprovider.dart';
-import 'package:timegest/data_base/tagprovider.dart';
 import 'package:timegest/models/categories.dart';
 import 'package:timegest/models/expenses.dart';
 import 'package:timegest/models/tag.dart';
@@ -26,30 +25,19 @@ class _formAddExpenseState extends State<formAddExpense> {
   String ? _selectedCategoryValue;
   String ? _selectedTagValue;
 
-  ExpenseProvider ep = ExpenseProvider();
   List<CategoryExpense> categoryItems = [];
-  CategotyProvider cp = CategotyProvider();
-  List<Tag> tagItems = [];
-  TagProvider tp = TagProvider();
-
-  Future<void> opendb() async{
-    Database db = await ep.openDataBase() ;
-  }
-
-  Future<void> adddata(Expense e) async{
-    ep.insert_expense(e);
-  }
-
-
+  List<Tag>tagItems = [];
 
   Future<void> loaddata() async{
-    final cat = await cp.extract_categories();
+    final prov = context.watch<ExpenseProvider>();
+    final cat = await prov.extract_categories();
+    final tag = await prov.extract_tags();
     if(mounted) {
       setState(() {
       categoryItems = cat;
     });
     }
-    final tag = await tp.extract_tags();
+
     if(mounted) {
       setState(() {
       tagItems = tag;
@@ -108,7 +96,6 @@ class _formAddExpenseState extends State<formAddExpense> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    opendb();
     _dateController.text = "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
     _timeController.text = "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}";
   }
@@ -320,8 +307,9 @@ class _formAddExpenseState extends State<formAddExpense> {
                             montant: _amountValue,
                             category: _selectedCategoryValue!,
                             tag: _selectedTagValue!,
-                            motif: _expenseDescriptionController.text,);
-                        adddata(exp);
+                            motif: _expenseDescriptionController.text,
+                        );
+                        context.read<ExpenseProvider>().insert_expense(exp);
                         FocusScope.of(context).unfocus();
                         Navigator.pop(context);
                       },

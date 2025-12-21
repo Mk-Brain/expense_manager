@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:timegest/widgets/formwidget.dart';
 import '../screens/home_page.dart';
+import 'package:provider/provider.dart';
+import 'package:timegest/data_base/expensiveprovider.dart';
+
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(create: (_) => ExpenseProvider()..openDataBase(), child: MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,16 +17,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp( 
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: title_app,
-      theme: ThemeData(
-        applyElevationOverlayColor: true,
-      ),
+      theme: ThemeData(applyElevationOverlayColor: true),
       darkTheme: ThemeData(),
       initialRoute: '/',
       routes: {
-        '/': (context) =>  HomePage(titre: title_app,),//formAddExpense()
+        '/': (context) => HomePage(titre: title_app), //formAddExpense()
       },
     );
   }
