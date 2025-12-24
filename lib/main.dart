@@ -1,30 +1,44 @@
 import 'package:flutter/material.dart';
-import '../screens/home_page.dart';
 import 'package:provider/provider.dart';
 import 'package:timegest/data_base/expensiveprovider.dart';
+import 'package:timegest/screens/home_page.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(create: (_) => ExpenseProvider()..openDataBase(), child: MyApp()),
+    // Initialisation du Provider avec chargement anticipé de la base de données
+    ChangeNotifierProvider(
+      create: (_) => ExpenseProvider()..openDataBase()..loadExpense(),
+      child: const MyApp(),
+    ),
   );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  final title_app = "Expense Tracker";
+  static const String titleApp = "Expense Tracker";
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: title_app,
-      theme: ThemeData(applyElevationOverlayColor: true),
-      darkTheme: ThemeData(),
+      title: titleApp,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        applyElevationOverlayColor: true,
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+      ),
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(titre: title_app), //formAddExpense()
+        '/': (context) => const HomePage(titre: titleApp),
       },
     );
   }

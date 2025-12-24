@@ -19,10 +19,20 @@ class _CategorymanagmentscreenState extends State<Categorymanagmentscreen> {
   final TextEditingController _categoryController = TextEditingController();
 
   Future<void>loaddata()async{
-    final data = await context.watch<ExpenseProvider>().extract_categories();
-    setState(() {
-      categoryItems = data;
-    });
+    categoryItems.clear();
+    await context.read<ExpenseProvider>().extractCategories(categoryItems);
+    if(mounted){
+      setState(() {
+
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loaddata();
   }
 
 
@@ -35,8 +45,6 @@ class _CategorymanagmentscreenState extends State<Categorymanagmentscreen> {
 
   @override
   Widget build(BuildContext context) {
-    loaddata();
-    //print(categoryItems);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: (){Navigator.pop(context);},),
@@ -66,7 +74,8 @@ class _CategorymanagmentscreenState extends State<Categorymanagmentscreen> {
                         Navigator.pop(context);
                       }, child: Text("Annuler")),
                       TextButton(onPressed: (){
-                        context.read<ExpenseProvider>().inser_category(_categoryController.text);
+                        context.read<ExpenseProvider>().insertCategory(_categoryController.text);
+                        loaddata();
                         Navigator.pop(context);
                       }, child: Text("OK"))
                     ],
@@ -85,8 +94,8 @@ class _CategorymanagmentscreenState extends State<Categorymanagmentscreen> {
                 title: Text(categoryItems[index].name),
                 trailing: IconButton(icon:Icon(Icons.delete, color: Colors.deepPurple,),
                   onPressed: (){
-                  context.read<ExpenseProvider>().delete_category(categoryItems[index].id);
-
+                  context.read<ExpenseProvider>().deleteCategory(categoryItems[index].id);
+                  loaddata();
                 },),
               );
             },
@@ -117,7 +126,7 @@ class _CategorymanagmentscreenState extends State<Categorymanagmentscreen> {
                       Navigator.pop(context);
                     }, child: Text("Annuler")),
                     TextButton(onPressed: (){
-                      context.read<ExpenseProvider>().inser_category(_categoryController.text);
+                      context.read<ExpenseProvider>().insertCategory(_categoryController.text);
                       Navigator.pop(context);
                     }, child: Text("OK"))
                   ],

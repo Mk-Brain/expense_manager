@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:timegest/data_base/expensiveprovider.dart';
 import 'package:timegest/models/expenses.dart';
 
@@ -12,22 +11,6 @@ class Displaybytag extends StatefulWidget {
 }
 
 class _DisplaybytagState extends State<Displaybytag> {
-
-  //listes de dépense
-  List<Expense> myExpenses = [];
-  //dictionnaire de dépenses regoupées en catégory
-  Map<String, List<Expense>> tagExp = {};
-
-
-  Future<void> loaddata() async{
-    final data = await context.watch<ExpenseProvider>().extract_expense();
-    if(mounted) {
-      setState(() {
-        myExpenses = data;
-      });
-    }
-  }
-
 
   void regroupement(
       Map<String, List<Expense>> tagExp,
@@ -73,12 +56,16 @@ class _DisplaybytagState extends State<Displaybytag> {
     );
   }
 
+
   
   @override
   Widget build(BuildContext context) {
-    loaddata();
-    tagExp = {};
+    //listes de dépense
+    List<Expense> myExpenses = context.watch<ExpenseProvider>().expense;
+    //dictionnaire de dépenses regoupées en catégory
+    Map<String, List<Expense>> tagExp = {};
     regroupement(tagExp, myExpenses);
+    
     return ListView.builder(
       itemCount: tagExp.length,
       itemBuilder: (context, index) {
@@ -89,42 +76,43 @@ class _DisplaybytagState extends State<Displaybytag> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(left: 8, top: 20, bottom: 5),
+              padding: const EdgeInsets.only(left: 8, top: 20, bottom: 5),
               child: Text(
                 tag,
                 style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple
+                    color: Theme.of(context).colorScheme.primary
                 ),
               ),
             ),
             ListView(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              children: items
-                  .map(
-                    (toElement) => InkWell(
-                  splashColor: Colors.blueAccent.withOpacity(0.2),
-                  onTap: (){
-                    _showMyDialog(toElement);
-                  },
-                  child: ListTile(
-                    title: Text(toElement.titre, style: TextStyle(fontSize: 18),),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      color: Colors.deepPurple,
-                      onPressed: () {
-                        context.read()<ExpenseProvider>().delete_expense(toElement.id);
-                      },
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: items
+                    .map(
+                      (toElement) => InkWell(
+                    splashColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    onTap: (){
+                      _showMyDialog(toElement);
+                    },
+                    child: ListTile(
+                      title: Text(toElement.titre, style: const TextStyle(fontSize: 18),),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        color: Theme.of(context).colorScheme.primary,
+                        onPressed: () async {
+                          await context.read<ExpenseProvider>().deleteExpense(toElement.id);
+                          // Recharger les données après suppression
+                        },
+                      ),
+                      subtitle: Text(toElement.date.toString(), style: const TextStyle(fontStyle: FontStyle.italic),),
+                      //titleTextStyle: TextStyle(fontSize: 14),
                     ),
-                    subtitle: Text(toElement.date.toString(), style: TextStyle(fontStyle: FontStyle.italic),),
-                    //titleTextStyle: TextStyle(fontSize: 14),
                   ),
-                ),
-              )
-                  .toList(),
-            ),
+                )
+                    .toList(),
+              ),
           ],
         );
       },

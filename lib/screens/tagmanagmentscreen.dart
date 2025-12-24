@@ -16,14 +16,23 @@ class _TagmanagmentscreenState extends State<Tagmanagmentscreen> {
 
 
   Future<void>loaddata()async{
-    final data = await context.watch<ExpenseProvider>().extract_tags();
-    setState(() {
-      tagItems = data;
-    });
+    tagItems.clear();
+    await context.read<ExpenseProvider>().extractTags(tagItems);
+    print(tagItems);
+    if(mounted) {
+      setState(() {
+      });
+    }
   }
 
   TextEditingController _tagController = TextEditingController();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loaddata();
+  }
 
   @override
   void dispose() {
@@ -34,7 +43,6 @@ class _TagmanagmentscreenState extends State<Tagmanagmentscreen> {
 
   @override
   Widget build(BuildContext context) {
-    loaddata();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -72,7 +80,8 @@ class _TagmanagmentscreenState extends State<Tagmanagmentscreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        context.read<ExpenseProvider>().inser_tag(_tagController.text);
+                        context.read<ExpenseProvider>().insertTag(_tagController.text);
+                        loaddata();
                         Navigator.pop(context);
                       },
                       child: Text("OK"),
@@ -95,7 +104,8 @@ class _TagmanagmentscreenState extends State<Tagmanagmentscreen> {
                 trailing: IconButton(
                   icon: Icon(Icons.delete, color: Colors.deepPurple),
                   onPressed: () {
-                    context.read<ExpenseProvider>().delete_tag(tagItems[index].id);
+                    context.read<ExpenseProvider>().deleteTag(tagItems[index].id);
+                    loaddata();
                   },
                 ),
               );
@@ -104,44 +114,6 @@ class _TagmanagmentscreenState extends State<Tagmanagmentscreen> {
           ),
         ),
       ),
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("nouvelle tag"),
-                content: TextFormField(
-                  controller: _tagController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text("Annuler"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      context.read<ExpenseProvider>().inser_tag(_tagController.text);
-                      Navigator.pop(context);
-                    },
-                    child: Text("OK"),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-        child: Icon(Icons.add, color: Theme.of(context).primaryColor),
-      ),*/
     );
   }
 }
