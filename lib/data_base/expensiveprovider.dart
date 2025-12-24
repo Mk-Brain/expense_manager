@@ -101,17 +101,6 @@ class ExpenseProvider with ChangeNotifier {
   }
 
 
-  Future<void> extractExpenses(List<Expense> expObject) async {
-    final db = await database;
-    List<Map<String, Object?>> expMap = await db.query('expenses');
-    for (var action in expMap) {
-      expObject.add(Expense.fromJSon(action));
-    }
-    notifyListeners();
-  }
-
-
-
   Future<void> insertExpense(Expense expense) async {
     final db = await database;
     Map<String, dynamic> exp = expense.toJson();
