@@ -116,6 +116,13 @@ class ExpenseProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> resertExpenseDB() async {
+    final db = await database;
+    await db.execute('''DELETE FROM expenses''');
+    await loadExpense();
+    notifyListeners();
+  }
+
   Future<void> updateExpense(int id, Map<String, dynamic> newData) async {
     final db = await database;
     await db.update('expenses', newData, where: 'id = ?', whereArgs: [id]);

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 import 'package:timegest/data_base/expensiveprovider.dart';
 import 'package:timegest/screens/home_page.dart';
 
-void main() {
+void main() async{
+
   runApp(
     // Initialisation du Provider avec chargement anticipé de la base de données
     ChangeNotifierProvider(
